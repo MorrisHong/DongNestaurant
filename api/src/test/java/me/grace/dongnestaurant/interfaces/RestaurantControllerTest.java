@@ -77,20 +77,29 @@ public class RestaurantControllerTest {
     }
 
     @Test
-    public void created() throws Exception {
+    public void created_With_Valid_Data() throws Exception {
 
         mockMvc.perform(post("/restaurants")
-                .content("{\"id\":1234,\"name\":\"BeRyong\",\"address\":\"Busan\"}")
+                .content("{\"name\":\"BeRyong\",\"address\":\"Busan\"}")
                 .contentType(MediaType.APPLICATION_JSON))
-                .andExpect(status().isCreated())
-                .andExpect(header().string("location", "/restaurants/1234"));
+                .andExpect(status().isCreated());
 
         verify(restaurantService).addRestaurant(any());
     }
 
+    @Test
+    public void created_With_Invalid_Data() throws Exception {
+
+        mockMvc.perform(post("/restaurants")
+                .content("{\"name\":\"\",\"address\":\"\"}")
+                .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isBadRequest());
+
+    }
+
 
     @Test
-    public void update() throws Exception {
+    public void update_with_valid_data() throws Exception {
         mockMvc.perform(patch("/restaurants/1234")
                     .contentType(MediaType.APPLICATION_JSON)
                     .content("{\"name\":\"joker bar\",\"address\":\"Busan\"}"))
@@ -99,7 +108,15 @@ public class RestaurantControllerTest {
         final String name = "joker bar";
         final String address = "Busan";
         verify(restaurantService).updateRestaurant(1234L, name, address);
-
     }
 
+    @Test
+    public void update_with_invalid_data() throws Exception {
+        mockMvc.perform(patch("/restaurants/1234")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content("{\"name\":\"\",\"address\":\"\"}"))
+                .andExpect(status().isBadRequest());
+
+
+    }
 }
