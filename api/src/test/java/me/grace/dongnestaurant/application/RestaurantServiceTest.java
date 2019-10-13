@@ -10,11 +10,13 @@ import org.springframework.test.context.junit4.SpringRunner;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 import static org.hamcrest.core.Is.is;
 import static org.junit.Assert.*;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.BDDMockito.given;
+import static org.mockito.Mockito.verify;
 
 @RunWith(SpringRunner.class)
 public class RestaurantServiceTest {
@@ -80,6 +82,23 @@ public class RestaurantServiceTest {
         Restaurant createdRestaurant = restaurantService.addRestaurant(restaurant);
 
         assertThat(createdRestaurant.getId(), is(1234L));
+
+    }
+
+    @Test
+    public void updateRestaurant() {
+        Restaurant originRestaurant = Restaurant.builder()
+                .id(1L)
+                .name("Archim")
+                .address("Seoul")
+                .build();
+
+        given(restaurantRepository.findById(1L)).willReturn(Optional.ofNullable(originRestaurant));
+
+        Restaurant updatedRestaurant = restaurantService.updateRestaurant(originRestaurant.getId(), "SoolPub","Busan");
+
+        assertThat(updatedRestaurant.getName(), is("SoolPub"));
+        assertThat(updatedRestaurant.getAddress(), is("Busan"));
 
     }
 

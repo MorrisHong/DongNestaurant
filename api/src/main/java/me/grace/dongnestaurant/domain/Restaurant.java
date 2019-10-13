@@ -30,4 +30,8 @@ public class Restaurant {
         this.menuItemList = menuItemList;
     }
 
+    public void updateInfo(String name, String address) {
+        this.name = name;
+        this.address = address;
+    }
 }

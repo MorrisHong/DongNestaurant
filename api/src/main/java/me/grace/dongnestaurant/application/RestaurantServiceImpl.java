@@ -5,6 +5,7 @@ import me.grace.dongnestaurant.domain.MenuItemRepository;
 import me.grace.dongnestaurant.domain.Restaurant;
 import me.grace.dongnestaurant.domain.RestaurantRepository;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
@@ -39,4 +40,15 @@ public class RestaurantServiceImpl implements RestaurantService {
         return restaurantRepository.save(restaurant);
     }
 
+    @Override
+    @Transactional
+    public Restaurant updateRestaurant(long id, String name, String address) {
+        //TODO: update Restaurant.
+        Restaurant restaurant = restaurantRepository.findById(id).orElse(null);
+        assert restaurant != null;
+        restaurant.updateInfo(name, address);
+
+
+        return restaurant;
+    }
 }
