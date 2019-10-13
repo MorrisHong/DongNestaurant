@@ -8,10 +8,10 @@ import java.util.List;
 @Repository
 public class RestaurantRepositoryImpl implements RestaurantRepository {
 
-    private List<Restaurant> list;
+    private List<Restaurant> restaurants;
 
     public RestaurantRepositoryImpl() {
-        list = new ArrayList<>();
+        restaurants = new ArrayList<>();
 //        Restaurant restaurant = new Restaurant(1L,"Archim","Seoul", new ArrayList());
         Restaurant restaurant1 = Restaurant.builder()
                 .id(1L)
@@ -24,20 +24,27 @@ public class RestaurantRepositoryImpl implements RestaurantRepository {
                 .address("Yong-In")
                 .build();
 
-        list.add(restaurant1);
-        list.add(restaurant2);
+        restaurants.add(restaurant1);
+        restaurants.add(restaurant2);
     }
 
     @Override
     public List<Restaurant> findAll() {
-        return this.list;
+        return this.restaurants;
     }
 
     @Override
     public Restaurant findById(Long id) {
-        for (Restaurant restaurant : list) {
+        for (Restaurant restaurant : restaurants) {
             if (restaurant.getId().equals(id)) return restaurant;
         }
         return null;
+    }
+
+    @Override
+    public Restaurant save(Restaurant restaurant) {
+        restaurant.setId(1234L);
+        restaurants.add(restaurant);
+        return restaurant;
     }
 }

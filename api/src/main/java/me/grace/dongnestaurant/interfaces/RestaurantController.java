@@ -1,22 +1,19 @@
 package me.grace.dongnestaurant.interfaces;
 
-import lombok.NoArgsConstructor;
 import me.grace.dongnestaurant.application.RestaurantService;
-import me.grace.dongnestaurant.domain.MenuItem;
 import me.grace.dongnestaurant.domain.Restaurant;
-import me.grace.dongnestaurant.domain.RestaurantRepository;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
 
+import java.net.URI;
+import java.net.URISyntaxException;
 import java.util.List;
 
 @RestController
 public class RestaurantController {
     private RestaurantService restaurantService;
 
-    public RestaurantController(RestaurantService restaurantService){
+    public RestaurantController(RestaurantService restaurantService) {
         this.restaurantService = restaurantService;
     }
 
@@ -29,4 +26,17 @@ public class RestaurantController {
     public Restaurant detail(@PathVariable("id") Long id) {
         return restaurantService.getRestaurant(id);
     }
+
+    @PostMapping("/restaurants")
+    public ResponseEntity<?> create(@RequestBody Restaurant resource)
+            throws URISyntaxException {
+        Restaurant restaurant = Restaurant.builder()
+                .name(resource.getName())
+                .address(resource.getAddress())
+                .id(resource.getId()).build();
+        restaurantService.addRestaurant(restaurant);
+        URI url = new URI("/restaurants/" +restaurant.getId());
+        return ResponseEntity.created(url).body(restaurant);
+    }
+
 }
