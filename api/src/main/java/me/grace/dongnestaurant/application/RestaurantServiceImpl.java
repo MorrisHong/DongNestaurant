@@ -1,9 +1,6 @@
 package me.grace.dongnestaurant.application;
 
-import me.grace.dongnestaurant.domain.MenuItem;
-import me.grace.dongnestaurant.domain.MenuItemRepository;
-import me.grace.dongnestaurant.domain.Restaurant;
-import me.grace.dongnestaurant.domain.RestaurantRepository;
+import me.grace.dongnestaurant.domain.*;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -23,7 +20,7 @@ public class RestaurantServiceImpl implements RestaurantService {
 
     @Override
     public Restaurant getRestaurant(Long id) {
-        Restaurant restaurant = restaurantRepository.findById(id).orElse(null);
+        Restaurant restaurant = restaurantRepository.findById(id).orElseThrow(() -> new RestaurantNotFoundException(id));
         List<MenuItem> menuItems = menuItemRepository.findAllByRestaurantId(id);
         restaurant.setMenuItemList(menuItems);
         return restaurant;

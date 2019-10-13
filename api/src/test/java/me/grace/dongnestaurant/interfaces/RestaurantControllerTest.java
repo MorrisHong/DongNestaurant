@@ -3,6 +3,7 @@ package me.grace.dongnestaurant.interfaces;
 import me.grace.dongnestaurant.application.RestaurantService;
 import me.grace.dongnestaurant.domain.MenuItemRepository;
 import me.grace.dongnestaurant.domain.Restaurant;
+import me.grace.dongnestaurant.domain.RestaurantNotFoundException;
 import me.grace.dongnestaurant.domain.RestaurantRepository;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -74,6 +75,13 @@ public class RestaurantControllerTest {
                 .andExpect(status().isOk())
                 .andExpect(content().string(containsString("\"id\":2,\"name\":\"Jeomsim\",\"address\":\"Yong-In\"")));
 //                .andExpect(content().string(containsString("김치")));
+    }
+
+    @Test
+    public void NotFound_Exception() throws Exception {
+        given(restaurantService.getRestaurant(404L)).willThrow(new RestaurantNotFoundException(404L));
+        mockMvc.perform(get("/restaurants/404"))
+                .andExpect(status().isNotFound());
     }
 
     @Test
