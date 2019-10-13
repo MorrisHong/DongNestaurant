@@ -1,11 +1,14 @@
 package me.grace.dongnestaurant.domain;
 
-import java.util.List;
+import org.springframework.data.jpa.repository.JpaRepository;
 
-public interface RestaurantRepository {
+import java.util.List;
+import java.util.Optional;
+
+public interface RestaurantRepository extends JpaRepository<Restaurant, Long> {
     List<Restaurant> findAll();
 
-    Restaurant findById(Long id);
+    Optional<Restaurant> findById(Long id);
 
     Restaurant save(Restaurant restaurant);
 }
