@@ -10,6 +10,7 @@ import java.net.URISyntaxException;
 import java.util.List;
 
 @RestController
+@CrossOrigin
 public class RestaurantController {
     private RestaurantService restaurantService;
 

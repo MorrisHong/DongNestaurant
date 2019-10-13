@@ -1,0 +1,17 @@
+{
+  "name": "dong-ne-staurant",
+  "version": "1.0.0",
+  "description": "DongNestaurant-web",
+  "main": "src/index.js",
+  "scripts": {
+    "start": "webpack-dev-server --port 3000",
+    "test": "jest"
+  },
+  "author": "gracelove",
+  "license": "ISC",
+  "devDependencies": {
+    "webpack": "^4.41.1",
+    "webpack-cli": "^3.3.9",
+    "webpack-dev-server": "^3.8.2"
+  }
+}
