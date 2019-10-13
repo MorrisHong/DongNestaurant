@@ -31,12 +31,23 @@ public class Restaurant {
     @JsonInclude(JsonInclude.Include.NON_NULL)
     private List<MenuItem> menuItemList;
 
+    @Transient
+    @JsonInclude(JsonInclude.Include.NON_NULL)
+    private List<Review> reviews;
+
     @Builder
-    public Restaurant(Long id, String name, String address, List menuItemList) {
+    public Restaurant(Long id, String name, String address) {
         this.id = id;
         this.name = name;
         this.address = address;
-        this.menuItemList = menuItemList;
+    }
+
+    public void setReviews(List<Review> reviews) {
+        this.reviews = new ArrayList<>(reviews);
+    }
+
+    public void setMenuItemList(List<MenuItem> menuItemList) {
+        this.menuItemList = new ArrayList<>(menuItemList);
     }
 
     public void updateInfo(String name, String address) {

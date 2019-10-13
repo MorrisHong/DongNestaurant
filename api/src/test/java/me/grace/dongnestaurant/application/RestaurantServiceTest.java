@@ -15,7 +15,9 @@ import java.util.Optional;
 import static org.hamcrest.core.Is.is;
 import static org.junit.Assert.*;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.BDDMockito.given;
+import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 
 @RunWith(SpringRunner.class)
@@ -27,6 +29,8 @@ public class RestaurantServiceTest {
     private RestaurantRepository restaurantRepository;
     @Mock
     private MenuItemRepository menuItemRepository;
+    @Mock
+    private ReviewRepository reviewRepository;
 
     @Before
     public void setUp() {
@@ -36,8 +40,21 @@ public class RestaurantServiceTest {
         MockitoAnnotations.initMocks(this);
         mockRestaurantRepository();
         mockMenuItemRepository();
+        mockReviewRepository();
 
-        restaurantService = new RestaurantServiceImpl(restaurantRepository, menuItemRepository);
+        restaurantService = new RestaurantServiceImpl(restaurantRepository, menuItemRepository, reviewRepository);
+    }
+
+    private void mockReviewRepository() {
+        List<Review> reviews = new ArrayList<>();
+        Review review = Review.builder()
+                .name("grace")
+                .score(5)
+                .description("마시써!")
+                .restaurantId(1L)
+                .build();
+        reviews.add(review);
+        given(reviewRepository.findAllByRestaurantId(1L)).willReturn(reviews);
     }
 
     private void mockRestaurantRepository() {
@@ -49,7 +66,7 @@ public class RestaurantServiceTest {
                 .build();
         restaurants.add(restaurant);
         given(restaurantRepository.findAll()).willReturn(restaurants);
-        given(restaurantRepository.findById(1L)).willReturn(java.util.Optional.ofNullable(restaurant));
+        given(restaurantRepository.findById(1L)).willReturn(Optional.ofNullable(restaurant));
 
     }
 
@@ -63,7 +80,28 @@ public class RestaurantServiceTest {
     @Test
     public void restaurant객체를_가져온다() {
         Restaurant restaurant = restaurantService.getRestaurant(1L);
+        MenuItem menuItem = menuItemRepository.findAllByRestaurantId(1L).get(0);
+        Review review = reviewRepository.findAllByRestaurantId(1L).get(0);
+
+        verify(restaurantRepository).findById(eq(1L));
+        verify(menuItemRepository, times(2)).findAllByRestaurantId(eq(1L));
+        verify(reviewRepository, times(2)).findAllByRestaurantId(eq(1L));
+
         assertThat(restaurant.getId(), is(1L));
+        assertThat(menuItem.getName(),is("Kimchi"));
+        assertThat(review.getDescription(), is("마시써!"));
+    }
+
+    @Test(expected = RestaurantNotFoundException.class)
+    public void notFoundRestaurant() {
+        restaurantService.getRestaurant(404L);
+    }
+
+    @Test
+    public void getRestaurants() {
+        List<Restaurant> all = restaurantRepository.findAll();
+        Restaurant restaurant = all.get(0);
+        assertThat(restaurant.getName(),is("Archim"));
     }
 
     @Test

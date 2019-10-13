@@ -1,10 +1,7 @@
 package me.grace.dongnestaurant.interfaces;
 
 import me.grace.dongnestaurant.application.RestaurantService;
-import me.grace.dongnestaurant.domain.MenuItemRepository;
-import me.grace.dongnestaurant.domain.Restaurant;
-import me.grace.dongnestaurant.domain.RestaurantNotFoundException;
-import me.grace.dongnestaurant.domain.RestaurantRepository;
+import me.grace.dongnestaurant.domain.*;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -15,6 +12,7 @@ import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.web.servlet.MockMvc;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 import static org.hamcrest.core.StringContains.containsString;
@@ -58,23 +56,46 @@ public class RestaurantControllerTest {
 
     private List<Restaurant> mockGetRestaurants() {
         List<Restaurant> restaurants = new ArrayList<>();
-        restaurants.add(new Restaurant(1L, "Archim", "Seoul", new ArrayList<>()));
-        restaurants.add(new Restaurant(2L, "Jeomsim", "Yong-In", new ArrayList<>()));
+        restaurants.add(new Restaurant(1L, "Archim", "Seoul"));
+        restaurants.add(new Restaurant(2L, "Jeomsim", "Yong-In"));
         return restaurants;
     }
 
     @Test
     public void 가게_하나를_JSON으로_뿌려준다() throws Exception {
-        Long id = 2L;
+
+        final long id = 1004L;
+        Restaurant restaurant = Restaurant.builder()
+                .id(id)
+                .name("Archim")
+                .address("Yong-In")
+                .build();
+
         given(restaurantService.getRestaurant(id))
-                .willReturn(mockGetRestaurants()
-                        .stream()
-                        .filter(restaurant -> restaurant.getId().equals(id)).findFirst().get());
+                .willReturn(restaurant);
+
+        Review review = Review.builder()
+                .name("grace")
+                .score(5)
+                .description("대다내!")
+                .build();
+
+        MenuItem menuItem = MenuItem.builder()
+                .name("Kimchi")
+                .build();
+
+        restaurant.setReviews(Arrays.asList(review));
+        restaurant.setMenuItemList(Arrays.asList(menuItem));
+
         mockMvc.perform(get("/restaurants/" + id))
                 .andDo(print())
                 .andExpect(status().isOk())
-                .andExpect(content().string(containsString("\"id\":2,\"name\":\"Jeomsim\",\"address\":\"Yong-In\"")));
-//                .andExpect(content().string(containsString("김치")));
+                .andExpect(content().string(containsString("\"id\":1004,\"name\":\"Archim\",\"address\":\"Yong-In\"")))
+                .andExpect(content().string(containsString("\"name\":\"grace\"")))
+                .andExpect(content().string(containsString("\"score\":5")))
+                .andExpect(content().string(containsString("\"name\":\"Kimchi\"")))
+                .andExpect(content().string(containsString("\"description\":\"대다내!\"")));
+
     }
 
     @Test
